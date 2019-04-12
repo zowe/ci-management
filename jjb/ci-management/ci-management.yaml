@@ -1,0 +1,16 @@
+
+---
+- project:
+    name: ci-management-ci-jobs
+    jobs:
+      - '{project-name}-ci-jobs'
+
+    project: ci-management
+    project-name: ci-management
+    build-node: centos7-2c-1g
+
+- project:
+    name: ci-management
+    views:
+      - project-view
+    project-name: ci-management
