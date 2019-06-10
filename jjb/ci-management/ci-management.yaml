@@ -3,7 +3,7 @@
 - project:
     name: ci-management-ci-jobs
     jobs:
-      - '{project-name}-ci-jobs'
+      - '{project-name}-github-ci-jobs'
 
     project: ci-management
     project-name: ci-management
