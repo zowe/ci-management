@@ -5,4 +5,4 @@ jenkins.ini
 # Packer
 .galaxy/
 *.retry
-cloud-env.json
+cloud-env.json*
