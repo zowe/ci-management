@@ -2,16 +2,21 @@
     name: global
 
     # lf-infra defaults
-    jenkins-ssh-credential: jenkins-ssh
+    jenkins-ssh-credential: 'zowe-github-ssh'
     git-url: https://github.com
-    git-clone-url: ‘git@github.com:’
+    git-clone-url: 'git@github.com:'
     github-org: zowe
+    submodule-recursive: true
+
     github_pr_whitelist:
       - tykeal
       - pono
     github_pr_admin_list:
       - tykeal
       - pono
+
+    # lftools
     lftools-version: '<1.0.0'
+
     mvn-site-id: zowe-site
     mvn-staging-id: zowe-staging
