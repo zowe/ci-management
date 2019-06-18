@@ -7,7 +7,7 @@
 
     project: ci-management
     project-name: ci-management
-    build-node: centos7-2c-1g
+    build-node: centos7-1c-1g
 
 - project:
     name: ci-management
