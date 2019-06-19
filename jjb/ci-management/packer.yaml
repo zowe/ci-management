@@ -11,6 +11,8 @@
 
     platforms:
       - centos-7
+      - ubuntu-16.04
+      - ubuntu-18.04
 
     templates: builder
 
@@ -29,3 +31,5 @@
 
     platforms:
       - centos-7
+      - ubuntu-16.04
+      - ubuntu-18.04
