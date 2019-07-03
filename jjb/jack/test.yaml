@@ -1,0 +1,25 @@
+- project:
+    name: jack-test-pipeline
+
+    jobs:
+      - '{project-name}-owasp-scan'
+
+    project: zowe-dependency-scan-pipeline
+    project-name: zowe-dependency-scan-pipeline
+    build-node: ubuntu1804-docker-4c-4g
+
+    platforms:
+      - centos-7
+      - ubuntu-16.04
+      - ubuntu-18.04
+
+    project-type: pipeline
+    sandbox: true
+    pipeline-scm:
+      scm:
+        - git:
+          url: ssh://jenkins@review.openstack.org:29418/second.git
+          branches:
+          - users/jack/test-image
+      script-path: Jenkinsfile.owasp-scan-wimage
+      lightweight-checkout: true
