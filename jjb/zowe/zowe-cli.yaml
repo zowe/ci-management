@@ -1,0 +1,11 @@
+---
+- project:
+    name: 'zowe-cli-builds'
+    description: 'Zowe CLI Builds'
+    repository:
+      - 'zowe-cli'
+      - 'imperative'
+      - 'zowe-cli-db2-plugin'
+      - 'zowe-cli-cics-plugin'
+    jobs:
+        - '{repository}-multibranch'

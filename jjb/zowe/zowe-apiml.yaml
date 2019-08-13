@@ -1,0 +1,8 @@
+---
+- project:
+    name: 'zowe-apiml-builds'
+    description: 'Zowe API Mediation Layer Builds'
+    repository:
+      - 'api-layer'
+    jobs:
+        - '{repository}-multibranch'

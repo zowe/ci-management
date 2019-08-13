@@ -1,0 +1,37 @@
+- job-template:
+
+    #####################
+    # VARIABLE DEFAULTS #
+    #####################
+
+    include-branches: '*'
+    exclude-branches: ''
+    no-fetch-tags: true
+    description: '{repository} Pipeline'
+    jenkinsfile: 'Jenkinsfile'
+    periodic-scan: '12h'
+
+    ########################
+    # MULITBRANCH PIPELINE #
+    ########################
+    name: '{repository}-multibranch'
+    display-name: '{repository}'
+    project-type: multibranch
+    script-path: '{jenkinsfile|Jenkinsfile}'
+    periodic-folder-trigger: '{periodic-scan}'
+    scm:
+      - github:
+          repo: '{repository}'
+          repo-owner: 'zowe'
+          credentials-id: 'zowe-github'
+          branch-discovery: 'no-pr'
+          discover-pr-origin: 'merge-current'
+          discover-pr-forks-strategy: 'merge-current'
+          # Below 'permission' means 'Admin or Write permissions'
+          discover-pr-forks-trust: 'permission'
+          build-strategies:
+              - named-branches:
+                  - wildcards-name:
+                      excludes: '{exclude-branches}'
+                      includes: '{include-branches}'
+          do-not-fetch-tags: '{no-fetch-tags}'
