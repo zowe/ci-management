@@ -1,9 +1,9 @@
 ---
 - project:
-    name: "zowe-website"
-    project-name: "zowe-website"
-    project: "zowe-website"
-    description: "Pipelines for updating Zowe website"
+    name: "zowe-docs-site"
+    project-name: "zowe-docs-site"
+    project: "zowe-docs-site"
+    description: "Pipelines for updating Zowe docs website"
     jobs:
       - "zowe-docs-site"
 
