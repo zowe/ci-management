@@ -1,0 +1,19 @@
+---
+- project:
+    name: "zowe-website"
+    project-name: "zowe-website"
+    project: "zowe-website"
+    description: "Pipelines for updating Zowe website"
+    jobs:
+      - "zowe-docs-site"
+
+- job:
+    name: "zowe-docs-site"
+    description: "Build, test and publish Zowe docs website"
+    project-type: multibranch
+    script-path: "Jenkinsfile.LFJ"
+    scm:
+      - github:
+          repo: "docs-site"
+          repo-owner: "zowe"
+          credentials-id: "zowe-github"
