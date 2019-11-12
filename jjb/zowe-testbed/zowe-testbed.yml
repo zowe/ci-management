@@ -21,7 +21,7 @@
 
 - job: 
     name: 'zowe-dockerimage-test'
-    description: "Hello World Pipeline"
+    description: "Hello World Pipeline :)"
     project-type: multibranch
     script-path: 'Jenkinsfile.test-docker'
     scm:
