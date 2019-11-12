@@ -29,3 +29,9 @@
           repo: 'zowe-dependency-scan-pipeline'
           repo-owner: 'zowe'
           credentials-id: 'zowe-github'
+
+- project:
+    name: "zowe-testbed-view"
+    project-name: "zowe"
+    view:
+      - project-view
