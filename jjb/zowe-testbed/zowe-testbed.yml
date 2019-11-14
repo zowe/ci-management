@@ -33,5 +33,5 @@
 - project:
     name: "zowe-testbed-view"
     project-name: "zowe"
-    view:
+    views:
       - project-view
