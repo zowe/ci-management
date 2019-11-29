@@ -11,9 +11,9 @@
 ################################################################################
 
 ################################################################################
-# This script sync artifacts from two jFrog Artifactory
+# This script sync artifacts between two jFrog Artifactory
 # 
-# Example: ./sync.sh -f artifactory-a -t artifactory-b repo/path/to/artifacts
+# Example: ./sync.sh -f artifactory-a -t artifactory-b repo/path/to/artifacts/
 ################################################################################
 
 ################################################################################

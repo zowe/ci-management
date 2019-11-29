@@ -11,9 +11,9 @@
 ################################################################################
 
 ################################################################################
-# This script sync artifacts from two jFrog Artifactory
+# This script cleans up nightly builds.
 # 
-# Example: ./clean-nightly.sh -s artifactory-server repo/path/to/nightly
+# Example: ./clean-nightly.sh -a artifactory-server repo/path/to/nightly/
 ################################################################################
 
 ################################################################################
