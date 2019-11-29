@@ -1,0 +1,8 @@
+libs-snapshot-local/org/zowe/
+libs-snapshot-local/org/zowe/cli/zowe-cli-package/
+libs-snapshot-local/org/zowe/explorer/data/sets/
+libs-snapshot-local/org/zowe/explorer/jobs/
+libs-snapshot-local/org/zowe/explorer-jes/
+libs-snapshot-local/org/zowe/explorer-mvs/
+libs-snapshot-local/org/zowe/explorer-uss/
+libs-snapshot-local/org/zowe/zss/

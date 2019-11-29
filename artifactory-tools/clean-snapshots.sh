@@ -22,14 +22,15 @@ SCRIPT_NAME=$(basename "$0")
 SCRIPT_PWD=$(cd $(dirname "$0") && pwd)
 RUN_PWD=$(pwd)
 DEFAULT_ARTIFACTORY_SERVER=giza
-DEFAULT_NIGHTLY_BUILD_FULL_PATH=libs-release-local/org/zowe/nightly/
-NIGHTLY_BUILD_PATTERNS="zowe-*.pax AZWE001.readme-*.txt AZWE001-*.pax.Z cli/zowe-cli-*.zip"
-NIGHTLY_BUILD_COUNT=30
+SNAPSHOT_BUILD_PATH_LIST=snapshots-paths.txt
+SNAPSHOT_BUILD_KEEP_PATTERN="^[0-9]+\.[0-9]+\.[0-9]+-(STAGING|SNAPSHOT|SNAPSHOTS|RC)\$"
+SNAPSHOT_BUILD_KEEP_DAYS=45
 
 ################################################################################
 # variables
 ARTIFACTORY_SERVER=$DEFAULT_ARTIFACTORY_SERVER
-NIGHTLY_BUILD_FULL_PATH=$DEFAULT_NIGHTLY_BUILD_FULL_PATH
+# 2019-06-07T14:57:10.657+0000
+TIMESTAMP_LASTMODIFIED=$(date -"v-${SNAPSHOT_BUILD_KEEP_DAYS}d" +%Y-%m-%dT%H:%M:%S.000+0000)
 
 # allow to exit by ctrl+c
 function finish {
@@ -69,52 +70,45 @@ while getopts ":ha:" opt; do
       ;;
   esac
 done
-shift $((OPTIND-1))
-NIGHTLY_BUILD_FULL_PATH=$1
-if [ -z "${NIGHTLY_BUILD_FULL_PATH}" ]; then
-  NIGHTLY_BUILD_FULL_PATH=$DEFAULT_NIGHTLY_BUILD_FULL_PATH
-fi
-NIGHTLY_BUILD_REPO=$(echo $NIGHTLY_BUILD_FULL_PATH | sed -e 's#^\([^/]\{1,\}\)/\(.\{1,\}\)#\1#')
-NIGHTLY_BUILD_PATH=$(echo $NIGHTLY_BUILD_FULL_PATH | sed -e 's#^\([^/]\{1,\}\)/\(.\{1,\}\)#\2#')
 
 ################################################################################
 # essential validations
-if [ -z "$NIGHTLY_BUILD_FULL_PATH" ]; then
-  echo "[${SCRIPT_NAME}][error] path is required."
-  exit 1
-fi
-if [ -z "$NIGHTLY_BUILD_REPO" ]; then
-  echo "[${SCRIPT_NAME}][error] couldn't find repository from path."
-  exit 1
-fi
-if [ -z "$NIGHTLY_BUILD_PATH" ]; then
-  echo "[${SCRIPT_NAME}][error] couldn't find artifact path from path."
-  exit 1
-fi
 
 ################################################################################
-echo "[${SCRIPT_NAME}] Cleaning $NIGHTLY_BUILD_FULL_PATH on ${ARTIFACTORY_SERVER} ..."
+echo "[${SCRIPT_NAME}] Cleaning snapshots on ${ARTIFACTORY_SERVER} ..."
+echo "[${SCRIPT_NAME}] - artifact(s) before ${TIMESTAMP_LASTMODIFIED} will be deleted."
 echo
 
 ################################################################################
-for pattern in $NIGHTLY_BUILD_PATTERNS; do
-  echo "[${SCRIPT_NAME}] Checking $NIGHTLY_BUILD_FULL_PATH$pattern ..."
-  ARTIFACTS="$(jfrog rt s --server-id "${ARTIFACTORY_SERVER}" --sort-by created "${NIGHTLY_BUILD_FULL_PATH}${pattern}" | jq -r '.[].path')"
-  echo -e "$ARTIFACTS"
-  echo
-  ARTIFACTS_COUNT=$(echo -e "$ARTIFACTS" | wc -l)
-  if [ $ARTIFACTS_COUNT -gt $NIGHTLY_BUILD_COUNT ]; then
-    SHOULD_DELETE_COUNT="$(($ARTIFACTS_COUNT-$NIGHTLY_BUILD_COUNT))"
-    echo "[${SCRIPT_NAME}] Will delete ${SHOULD_DELETE_COUNT} artifact(s) ..."
-    SHOULD_DELETE="$(echo -e "$ARTIFACTS" | head -n ${SHOULD_DELETE_COUNT})"
-    for one in $SHOULD_DELETE; do
-      echo "[${SCRIPT_NAME}] - ${one} ..."
-      jfrog rt del --server-id "${ARTIFACTORY_SERVER}" --quiet "${one}"
-      sleep 0.3
-    done
-  else
-    echo "[${SCRIPT_NAME}] no need to clean"
-  fi
+for pattern in $(cat "${SCRIPT_PWD}/${SNAPSHOT_BUILD_PATH_LIST}"); do
+  echo "[${SCRIPT_NAME}] Checking $pattern ..."
+  SUBFOLDERS="$(jfrog rt curl --server-id "${ARTIFACTORY_SERVER}" --silent -XGET "/api/storage/${pattern}" | jq -r '.children[] | select(.folder == true) | select(.uri|test("/[0-9]+.[0-9]+.[0-9]+-")) | .uri | .[1:]')"
+  for folder in $SUBFOLDERS; do
+    if [[ $folder =~ $SNAPSHOT_BUILD_KEEP_PATTERN ]]; then
+      echo "[${SCRIPT_NAME}] - ${folder} ==> keep"
+    else
+      LAST_MODIFIED="$(jfrog rt curl --server-id "${ARTIFACTORY_SERVER}" --silent -XGET /api/storage/${pattern}${folder}?lastModified |  jq -r '.lastModified')"
+      if [ "${LAST_MODIFIED}" = "null" ]; then
+        echo "[${SCRIPT_NAME}] - ${folder} (empty) deleting ..."
+        if jfrog rt curl --server-id "${ARTIFACTORY_SERVER}" -XDELETE "/${pattern}${folder}"; then
+          echo "[${SCRIPT_NAME}]                   success"
+        else
+          echo "[${SCRIPT_NAME}]                   failed"
+        fi
+        sleep 0.3
+      elif [[ $LAST_MODIFIED > $TIMESTAMP_LASTMODIFIED ]]; then
+        echo "[${SCRIPT_NAME}] - ${folder} (${LAST_MODIFIED}) ==> keep"
+      else
+        echo "[${SCRIPT_NAME}] - ${folder} (${LAST_MODIFIED}) deleting ..."
+        if jfrog rt curl --server-id "${ARTIFACTORY_SERVER}" -XDELETE "/${pattern}${folder}"; then
+          echo "[${SCRIPT_NAME}]                   success"
+        else
+          echo "[${SCRIPT_NAME}]                   failed"
+        fi
+        sleep 0.3
+      fi
+    fi
+  done
   echo
 done
 
