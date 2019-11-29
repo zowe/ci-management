@@ -21,7 +21,7 @@
 SCRIPT_NAME=$(basename "$0")
 SCRIPT_PWD=$(cd $(dirname "$0") && pwd)
 RUN_PWD=$(pwd)
-DEFAULT_ARTIFACTORY_ORIGINAL=giza
+DEFAULT_ARTIFACTORY_ORIGINAL=gizaartifactory
 DEFAULT_ARTIFACTORY_TARGET=zowe
 TMP_FOLDER=.artifactory-sync
 
