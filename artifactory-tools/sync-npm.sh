@@ -164,6 +164,9 @@ echo
 ################################################################################
 echo "[${SCRIPT_NAME}] Syncing tags ..."
 DIST_TAGS_ORIGINAL=$(cat original.json | jq -r '."dist-tags" | to_entries | .[].key')
+if [ ! -f ~/.npmrc ]; then
+  touch ~/.npmrc
+fi
 cp ~/.npmrc ~/.npmrc-npm-sync-bak
 # npm config set registry https://zowe.jfrog.io/zowe/api/npm/npm-local-release/
 NPMRC="$(jfrog rt curl --server-id "${NPM_REGISTRY_TARGET}" --silent -XGET /api/npm/auth)"
