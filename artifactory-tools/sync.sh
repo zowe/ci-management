@@ -109,6 +109,16 @@ jfrog rt dl --server-id "${ARTIFACTORY_ORIGINAL}" "${ARTIFACTORY_FULL_PATH}"
 echo
 
 ################################################################################
+echo "[${SCRIPT_NAME}] Check target files ..."
+TARGET_EXISTS="$(jfrog rt s --server-id "${ARTIFACTORY_TARGET}" "${ARTIFACTORY_FULL_PATH}" | jq -r '.[].path' | sed -e 's#[^/]\{1,\}/##')"
+echo "[${SCRIPT_NAME}] found $(echo "${TARGET_EXISTS}" | wc -l) file(s), deleting from downloaded to avoid overwritten ..."
+for f in $TARGET_EXISTS; do
+  echo "[${SCRIPT_NAME}] - ${f}"
+  rm -f "${f}"
+done
+echo
+
+################################################################################
 echo "[${SCRIPT_NAME}] Uploading artifacts ..."
 jfrog rt u --server-id "${ARTIFACTORY_TARGET}" \
   --recursive --include-dirs=true --flat=false \
