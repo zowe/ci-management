@@ -181,8 +181,8 @@ fi
 # cat ~/.npmrc
 for tag in $DIST_TAGS_ORIGINAL; do
   echo -n "[${SCRIPT_NAME}] - ${tag}: "
-  IN_ORIGINAL="$(cat original.json | jq -r ".\"dist-tags\".${tag}")"
-  IN_TARGET="$(cat target.json | jq -r ".\"dist-tags\".${tag}")"
+  IN_ORIGINAL="$(cat original.json | jq -r ".\"dist-tags\".\"${tag}\"")"
+  IN_TARGET="$(cat target.json | jq -r ".\"dist-tags\".\"${tag}\"")"
   echo "${IN_ORIGINAL} <-> ${IN_TARGET}"
   if [ "${IN_ORIGINAL}" == "${IN_TARGET}" ]; then
     echo "[${SCRIPT_NAME}]                                       same, skipped"
