@@ -1,0 +1,67 @@
+/*
+ * This program and the accompanying materials are made available under the terms of the
+ * Eclipse Public License v2.0 which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-v20.html
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Copyright Contributors to the Zowe Project.
+ */
+
+node('ibm-jenkins-slave-nvm') {
+    echo "Jenkins library branch $branch will be used to build."
+    def lib = library("jenkins-library").org.zowe.jenkins_shared_library
+
+    def pipeline = lib.pipelines.generic.GenericPipeline.new(this)
+
+    def JFROG_CLI_CONFIG = 'zowe-jack'
+
+    pipeline.admins.add("jackjia")
+
+    pipeline.setup(
+        packageName: 'org.zowe',
+        artifactory: [
+            url                        : lib.Constants.DEFAULT_LFJ_ARTIFACTORY_URL,
+            usernamePasswordCredential : 'zowe.jfrog.io-jack',
+        ],
+        extraInit: {
+            // prepare JFrog CLI configurations
+            withCredentials([
+                usernamePassword(
+                    credentialsId: pipeline.artifactory.usernamePasswordCredential,
+                    passwordVariable: 'PASSWORD',
+                    usernameVariable: 'USERNAME'
+                )
+            ]) {
+                sh "jfrog rt config ${JFROG_CLI_CONFIG}" +
+                    " --url=${pipeline.artifactory.url}" +
+                    " --user=\${USERNAME}" +
+                    " --password=\${PASSWORD}"
+            }
+        }
+    )
+
+    pipeline.createStage(
+        name          : "Clean Up Nightly Builds",
+        isSkippable   : true,
+        stage         : {
+            dir('artifactory-tools') {
+                sh "./clean-nightly.sh -a ${JFROG_CLI_CONFIG}"
+            }
+        },
+        timeout: [time: 20, unit: 'MINUTES']
+    )
+
+    pipeline.createStage(
+        name          : "Clean Up Snapshot Builds",
+        isSkippable   : true,
+        stage         : {
+            dir('artifactory-tools') {
+                sh "./clean-snapshots.sh -a ${JFROG_CLI_CONFIG}"
+            }
+        },
+        timeout: [time: 40, unit: 'MINUTES']
+    )
+
+    pipeline.end()
+}

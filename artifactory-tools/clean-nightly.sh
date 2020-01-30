@@ -21,9 +21,9 @@
 SCRIPT_NAME=$(basename "$0")
 SCRIPT_PWD=$(cd $(dirname "$0") && pwd)
 RUN_PWD=$(pwd)
-DEFAULT_ARTIFACTORY_SERVER=gizaartifactory
+DEFAULT_ARTIFACTORY_SERVER=zowe-jack
 DEFAULT_NIGHTLY_BUILD_FULL_PATH=libs-release-local/org/zowe/nightly/
-NIGHTLY_BUILD_PATTERNS="zowe-*.pax AZWE001.readme-*.txt AZWE001-*.pax.Z cli/zowe-cli-*.zip"
+NIGHTLY_BUILD_PATTERNS="zowe-*.pax zowe-smpe-*.tar AZWE001.readme-*.txt AZWE001-*.pax.Z cli/zowe-cli-*.zip"
 NIGHTLY_BUILD_COUNT=30
 
 ################################################################################

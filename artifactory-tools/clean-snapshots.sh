@@ -21,10 +21,10 @@
 SCRIPT_NAME=$(basename "$0")
 SCRIPT_PWD=$(cd $(dirname "$0") && pwd)
 RUN_PWD=$(pwd)
-DEFAULT_ARTIFACTORY_SERVER=gizaartifactory
+DEFAULT_ARTIFACTORY_SERVER=zowe-jack
 SNAPSHOT_BUILD_PATH_LIST=snapshots-paths.txt
 SNAPSHOT_BUILD_KEEP_PATTERN="^[0-9]+\.[0-9]+\.[0-9]+-(STAGING|SNAPSHOT|SNAPSHOTS|RC)\$"
-SNAPSHOT_BUILD_KEEP_DAYS=45
+SNAPSHOT_BUILD_KEEP_DAYS=30
 
 ################################################################################
 # variables
