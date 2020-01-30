@@ -13,8 +13,6 @@ node('ibm-jenkins-slave-nvm') {
 
     def pipeline = lib.pipelines.generic.GenericPipeline.new(this)
 
-    def JFROG_CLI_CONFIG = 'zowe-jack'
-
     pipeline.admins.add("jackjia")
 
     // run the build every day between 1am ~ 7am
@@ -24,23 +22,9 @@ node('ibm-jenkins-slave-nvm') {
         packageName: 'org.zowe',
         artifactory: [
             url                        : lib.Constants.DEFAULT_LFJ_ARTIFACTORY_URL,
+            // to gain write permission
             usernamePasswordCredential : 'zowe.jfrog.io-jack',
-        ],
-        extraInit: {
-            // prepare JFrog CLI configurations
-            withCredentials([
-                usernamePassword(
-                    credentialsId: pipeline.artifactory.usernamePasswordCredential,
-                    passwordVariable: 'PASSWORD',
-                    usernameVariable: 'USERNAME'
-                )
-            ]) {
-                sh "jfrog rt config ${JFROG_CLI_CONFIG}" +
-                    " --url=${pipeline.artifactory.url}" +
-                    " --user=\${USERNAME}" +
-                    " --password=\${PASSWORD}"
-            }
-        }
+        ]
     )
 
     pipeline.createStage(
@@ -48,7 +32,7 @@ node('ibm-jenkins-slave-nvm') {
         isSkippable   : true,
         stage         : {
             dir('artifactory-tools') {
-                sh "./clean-nightly.sh -a ${JFROG_CLI_CONFIG}"
+                sh "./clean-nightly.sh -a ${pipeline.artifactory.CLI_CONFIG_NAME}"
             }
         },
         timeout: [time: 20, unit: 'MINUTES']
@@ -59,7 +43,7 @@ node('ibm-jenkins-slave-nvm') {
         isSkippable   : true,
         stage         : {
             dir('artifactory-tools') {
-                sh "./clean-snapshots.sh -a ${JFROG_CLI_CONFIG}"
+                sh "./clean-snapshots.sh -a ${pipeline.artifactory.CLI_CONFIG_NAME}"
             }
         },
         timeout: [time: 40, unit: 'MINUTES']
