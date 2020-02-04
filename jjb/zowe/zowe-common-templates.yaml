@@ -29,9 +29,9 @@
           discover-pr-forks-strategy: 'merge-current'
           # Below 'permission' means 'Admin or Write permissions'
           discover-pr-forks-trust: 'permission'
-          build-strategies:
-              - named-branches:
-                  - wildcards-name:
-                      excludes: '{exclude-branches}'
-                      includes: '{include-branches}'
+          head-filter-regex: '{include-branches}'
+          # Bitbucket only filter?
+          # filter-by-name-wildcard:
+          #   excludes: '{exclude-branches}'
+          #   includes: '{include-branches}'
           do-not-fetch-tags: '{no-fetch-tags}'

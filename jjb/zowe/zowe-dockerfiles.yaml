@@ -1,0 +1,11 @@
+---
+- project:
+    name: 'zowe-license-scanning-dockerfile'
+    project-name: 'zowe'
+    description: 'Zowe License ScanningDockerfile'
+    repository:
+      - 'zowe-dockerfiles':
+          include-branches: "master"
+          jenkinsfile: 'dockerfiles/license-scanning/Jenkinsfile'
+    jobs:
+        - '{repository}-multibranch'
